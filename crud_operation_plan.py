@@ -1,11 +1,10 @@
-import requests
 import psycopg2
 import psycopg2.extras
 from datetime import datetime
 from contextlib import contextmanager
  
+ 
 class Database:
-    """Wraps a psycopg2 connection to the Neon Postgres instance."""
  
     def __init__(self, host, dbname, user, password, port=5432, sslmode="require"):
         self.conn = psycopg2.connect(
@@ -30,7 +29,7 @@ class Database:
             raise
         finally:
             cur.close()
- 
+ #I am not even sure if i need to have this in here because i already created the tables but god forbid something gets deleted tbh 
     def create_tables(self):
         """Idempotent: only creates tables if they don't already exist."""
         with self.cursor() as cur:
@@ -400,41 +399,7 @@ class OrderItemsCRUD:
         with self.db.cursor() as cur:
             cur.execute("DELETE FROM order_items WHERE id = %s", (order_item_id,))
             return cur.rowcount > 0
- 
- 
-# ---------------------------------------------------------------------------
-# Demo
-# ---------------------------------------------------------------------------
- 
-if __name__ == "__main__":
-    postgresql://neondb_owner:Mallen271704%21%21@ep-divine-darkness-atiewbbt-pooler.c-9.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
-    db = Database(
-        host="ep-divine-darkness-atiewbbt.c-9.us-east-1.aws.neon.tech",
-        dbname="neondb",
-        user="campus_app_user",
-        password="wacK-whAr-RuSM-JoL1!",
-    )
- 
-    roles = RoleCRUD(db)
-    users = UserCRUD(db)
-    vendors = VendorCRUD(db)
-    menus = MenuCRUD(db)
-    orders = OrdersCRUD(db)
-    order_items = OrderItemsCRUD(db)
- 
-    # Read examples against the existing seed data
-    print("All roles:", roles.get_all())
-    print("Vendor 1 menu:", menus.get_by_vendor(1))
-    print("User 3's orders:", orders.get_by_user(3))
-    print("Order 1 with vendor name:", orders.get_with_vendor_name(1))
- 
-    # Update example
-    orders.update(11, status="Delivered")
-    print("Order 11 after update:", orders.get(11))
- 
-    db.close()
- 
+#-------------------------------------------------------------------------
 
-
-
-
+#-------------------------------------------------------------------------
+db.close()
