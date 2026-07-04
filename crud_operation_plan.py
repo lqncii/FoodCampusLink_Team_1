@@ -3,22 +3,103 @@ from datetime import datetime
 from contextlib import contextmanager
 
 
-class CampusFoodLinkCRUD:
-    def __init__(self, db_name="campusfoodlink.db"):
-        self.conn = sqlite3.connect(db_name)
-        self.conn.row_factory = sqlite3.Row  # Allows dictionary-like access
-        self.create_tables()  # Create tables if they don't exist
+class DataBase:
+    def __init__(self, db_path="campus_foodlink.db"):
+        self.db_path = db_path
+        self.conn = sqlite3.connect(self.db_path)
+        self.conn.row_factory = sqlite3.Row
+        self.conn.execute("PRAGMA foreign_keys = ON")
+        self._create_tables()
 
-    def create_tables(self):
-        """Create tables (for demo/testing)"""
-        cursor = self.conn.cursor()
-        # (You can paste your full CREATE TABLE statements here if needed)
-        self.conn.commit()
+    @contextmanager
+    def cursor(self):
+        cur = self.conn.cursor()
+        try:
+            yield cur
+            self.conn.commit()
+        except Exception:
+            self.conn.rollback()
+            raise
+        finally:
+            cur.close()
+
+    def _create_tables(self):
+        with self.cursor() as cur:
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS Role (
+                    ID INTEGER PRIMARY KEY AUTOINCREMENT,
+                    Title TEXT NOT NULL,
+                    Description TEXT
+                )
+            """)
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS User (
+                    ID INTEGER PRIMARY KEY AUTOINCREMENT,
+                    FirstName TEXT NOT NULL,
+                    LastName TEXT NOT NULL,
+                    DateOfBirth TEXT,
+                    PhoneNumber TEXT,
+                    Email TEXT UNIQUE NOT NULL,
+                    Password TEXT NOT NULL,
+                    RoleID INTEGER,
+                    FOREIGN KEY (RoleID) REFERENCES Role(ID)
+                )
+            """)
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS Vendor (
+                    ID INTEGER PRIMARY KEY AUTOINCREMENT,
+                    Name TEXT NOT NULL,
+                    Phone TEXT,
+                    Email TEXT,
+                    Address TEXT,
+                    City TEXT,
+                    State TEXT,
+                    Zip TEXT
+                )
+            """)
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS Menu (
+                    ID INTEGER PRIMARY KEY AUTOINCREMENT,
+                    VendorID INTEGER NOT NULL,
+                    ItemName TEXT NOT NULL,
+                    ItemPrice REAL NOT NULL,
+                    ItemDescription TEXT,
+                    FOREIGN KEY (VendorID) REFERENCES Vendor(ID)
+                )
+            """)
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS Orders (
+                    ID INTEGER PRIMARY KEY AUTOINCREMENT,
+                    UserID INTEGER NOT NULL,
+                    VendorID INTEGER NOT NULL,
+                    DateTime TEXT NOT NULL,
+                    Status TEXT NOT NULL,
+                    Discount REAL DEFAULT 0,
+                    TotalPrice REAL NOT NULL,
+                    FOREIGN KEY (UserID) REFERENCES User(ID),
+                    FOREIGN KEY (VendorID) REFERENCES Vendor(ID)
+                )
+            """)
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS OrderItems (
+                    ID INTEGER PRIMARY KEY AUTOINCREMENT,
+                    OrderID INTEGER NOT NULL,
+                    MenuItemID INTEGER NOT NULL,
+                    Quantity INTEGER NOT NULL,
+                    ItemPriceAtOrder REAL NOT NULL,
+                    ItemTotalPrice REAL NOT NULL,
+                    FOREIGN KEY (OrderID) REFERENCES Orders(ID),
+                    FOREIGN KEY (MenuItemID) REFERENCES Menu(ID)
+                )
+            """)
 
     def close(self):
         self.conn.close()
 
-    # ====================== CREATE ======================
+
+def _row_to_dict(row):
+    return dict(row) if row else None
+    
     def create_user(self, role_id, last_name, first_name, date_of_birth, phone_number, email, password):
         sql = """
             INSERT INTO users (role_id, last_name, first_name, date_of_birth, phone_number, email, password)
