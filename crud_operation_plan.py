@@ -1,16 +1,24 @@
-import sqlite3
+import requests
+import psycopg2
+import psycopg2.extras
 from datetime import datetime
 from contextlib import contextmanager
-
-
-class DataBase:
-    def __init__(self, db_path="campus_foodlink.db"):
-        self.db_path = db_path
-        self.conn = sqlite3.connect(self.db_path)
-        self.conn.row_factory = sqlite3.Row
-        self.conn.execute("PRAGMA foreign_keys = ON")
-        self._create_tables()
-
+ 
+class Database:
+    """Wraps a psycopg2 connection to the Neon Postgres instance."""
+ 
+    def __init__(self, host, dbname, user, password, port=5432, sslmode="require"):
+        self.conn = psycopg2.connect(
+            host=host,
+            dbname=dbname,
+            user=user,
+            password=password,
+            port=port,
+            sslmode=sslmode,
+            cursor_factory=psycopg2.extras.RealDictCursor,
+        )
+        self.create_tables()
+ 
     @contextmanager
     def cursor(self):
         cur = self.conn.cursor()
@@ -22,154 +30,411 @@ class DataBase:
             raise
         finally:
             cur.close()
-
-    def _create_tables(self):
+ 
+    def create_tables(self):
+        """Idempotent: only creates tables if they don't already exist."""
         with self.cursor() as cur:
             cur.execute("""
-                CREATE TABLE IF NOT EXISTS Role (
-                    ID INTEGER PRIMARY KEY AUTOINCREMENT,
-                    Title TEXT NOT NULL,
-                    Description TEXT
+                CREATE TABLE IF NOT EXISTS roles (
+                    id SERIAL PRIMARY KEY,
+                    title TEXT NOT NULL,
+                    description TEXT
                 )
             """)
             cur.execute("""
-                CREATE TABLE IF NOT EXISTS User (
-                    ID INTEGER PRIMARY KEY AUTOINCREMENT,
-                    FirstName TEXT NOT NULL,
-                    LastName TEXT NOT NULL,
-                    DateOfBirth TEXT,
-                    PhoneNumber TEXT,
-                    Email TEXT UNIQUE NOT NULL,
-                    Password TEXT NOT NULL,
-                    RoleID INTEGER,
-                    FOREIGN KEY (RoleID) REFERENCES Role(ID)
+                CREATE TABLE IF NOT EXISTS users (
+                    id SERIAL PRIMARY KEY,
+                    last_name TEXT NOT NULL,
+                    first_name TEXT NOT NULL,
+                    date_birth DATE,
+                    phone_number TEXT,
+                    email TEXT UNIQUE NOT NULL,
+                    password TEXT NOT NULL,
+                    role INTEGER REFERENCES roles(id)
                 )
             """)
             cur.execute("""
-                CREATE TABLE IF NOT EXISTS Vendor (
-                    ID INTEGER PRIMARY KEY AUTOINCREMENT,
-                    Name TEXT NOT NULL,
-                    Phone TEXT,
-                    Email TEXT,
-                    Address TEXT,
-                    City TEXT,
-                    State TEXT,
-                    Zip TEXT
+                CREATE TABLE IF NOT EXISTS vendors (
+                    id SERIAL PRIMARY KEY,
+                    name TEXT NOT NULL,
+                    phone_number TEXT,
+                    email TEXT,
+                    address TEXT,
+                    city TEXT,
+                    state TEXT,
+                    zip_code TEXT
                 )
             """)
             cur.execute("""
-                CREATE TABLE IF NOT EXISTS Menu (
-                    ID INTEGER PRIMARY KEY AUTOINCREMENT,
-                    VendorID INTEGER NOT NULL,
-                    ItemName TEXT NOT NULL,
-                    ItemPrice REAL NOT NULL,
-                    ItemDescription TEXT,
-                    FOREIGN KEY (VendorID) REFERENCES Vendor(ID)
+                CREATE TABLE IF NOT EXISTS menus (
+                    id SERIAL PRIMARY KEY,
+                    vendor_id INTEGER NOT NULL REFERENCES vendors(id),
+                    item_name TEXT NOT NULL,
+                    item_description TEXT,
+                    item_price NUMERIC(10, 2) NOT NULL
                 )
             """)
             cur.execute("""
-                CREATE TABLE IF NOT EXISTS Orders (
-                    ID INTEGER PRIMARY KEY AUTOINCREMENT,
-                    UserID INTEGER NOT NULL,
-                    VendorID INTEGER NOT NULL,
-                    DateTime TEXT NOT NULL,
-                    Status TEXT NOT NULL,
-                    Discount REAL DEFAULT 0,
-                    TotalPrice REAL NOT NULL,
-                    FOREIGN KEY (UserID) REFERENCES User(ID),
-                    FOREIGN KEY (VendorID) REFERENCES Vendor(ID)
+                CREATE TABLE IF NOT EXISTS orders (
+                    id SERIAL PRIMARY KEY,
+                    user_id INTEGER NOT NULL REFERENCES users(id),
+                    vendor_id INTEGER NOT NULL REFERENCES vendors(id),
+                    date_time TIMESTAMP NOT NULL,
+                    status TEXT NOT NULL,
+                    discount NUMERIC(5, 2) DEFAULT 0,
+                    total_price NUMERIC(10, 2) NOT NULL
                 )
             """)
             cur.execute("""
-                CREATE TABLE IF NOT EXISTS OrderItems (
-                    ID INTEGER PRIMARY KEY AUTOINCREMENT,
-                    OrderID INTEGER NOT NULL,
-                    MenuItemID INTEGER NOT NULL,
-                    Quantity INTEGER NOT NULL,
-                    ItemPriceAtOrder REAL NOT NULL,
-                    ItemTotalPrice REAL NOT NULL,
-                    FOREIGN KEY (OrderID) REFERENCES Orders(ID),
-                    FOREIGN KEY (MenuItemID) REFERENCES Menu(ID)
+                CREATE TABLE IF NOT EXISTS order_items (
+                    id SERIAL PRIMARY KEY,
+                    order_id INTEGER NOT NULL REFERENCES orders(id),
+                    menu_item_id INTEGER NOT NULL REFERENCES menus(id),
+                    quantity INTEGER NOT NULL,
+                    item_price_at_order NUMERIC(10, 2) NOT NULL,
+                    item_total_price NUMERIC(10, 2) NOT NULL
                 )
             """)
-
+ 
     def close(self):
         self.conn.close()
-
-
-def _row_to_dict(row):
-    return dict(row) if row else None
-    
-    def create_user(self, role_id, last_name, first_name, date_of_birth, phone_number, email, password):
-        sql = """
-            INSERT INTO users (role_id, last_name, first_name, date_of_birth, phone_number, email, password)
-            VALUES (?, ?, ?, ?, ?, ?, ?) RETURNING user_id;
-        """
-        cursor = self.conn.cursor()
-        cursor.execute(sql, (role_id, last_name, first_name, date_of_birth, phone_number, email, password))
-        self.conn.commit()
-        return cursor.lastrowid
-
-    def create_menu_item(self, vendor_id, item_name, item_description, item_price):
-        sql = """
-            INSERT INTO menus (vendor_id, item_name, item_description, item_price)
-            VALUES (?, ?, ?, ?);
-        """
-        cursor = self.conn.cursor()
-        cursor.execute(sql, (vendor_id, item_name, item_description, item_price))
-        self.conn.commit()
-
-    def create_order(self, user_id, vendor_id, total_price, discount=0.0):
-        sql = """
-            INSERT INTO orders (user_id, vendor_id, status, total_price, discount)
-            VALUES (?, ?, 'pending', ?, ?);
-        """
-        cursor = self.conn.cursor()
-        cursor.execute(sql, (user_id, vendor_id, total_price, discount))
-        self.conn.commit()
-        return cursor.lastrowid
-
-    # ====================== READ ======================
-    def get_menu_items_by_vendor(self, vendor_id):
-        sql = "SELECT * FROM menus WHERE vendor_id = ?;"
-        cursor = self.conn.cursor()
-        cursor.execute(sql, (vendor_id,))
-        return [dict(row) for row in cursor.fetchall()]
-
-    def get_order_details(self, order_id):
-        sql = """
-            SELECT o.*, v.name as vendor_name 
-            FROM orders o 
-            JOIN vendors v ON o.vendor_id = v.vendor_id 
-            WHERE o.order_id = ?;
-        """
-        cursor = self.conn.cursor()
-        cursor.execute(sql, (order_id,))
-        row = cursor.fetchone()
-        return dict(row) if row else None
-
-    # ====================== UPDATE ======================
-    def update_order_status(self, order_id, new_status):
-        sql = "UPDATE orders SET status = ? WHERE order_id = ?;"
-        cursor = self.conn.cursor()
-        cursor.execute(sql, (new_status, order_id))
-        self.conn.commit()
-
-    # ====================== DELETE (Soft) ======================
-    def cancel_order(self, order_id):
-        sql = "UPDATE orders SET status = 'cancelled' WHERE order_id = ? AND status = 'pending';"
-        cursor = self.conn.cursor()
-        cursor.execute(sql, (order_id,))
-        self.conn.commit()
-
-
-# ====================== TEST / DEMO ======================
+ 
+ 
+# ---------------------------------------------------------------------------
+# roles
+# ---------------------------------------------------------------------------
+ 
+class RoleCRUD:
+    def __init__(self, db: Database):
+        self.db = db
+ 
+    def create(self, title, description=None):
+        with self.db.cursor() as cur:
+            cur.execute(
+                "INSERT INTO roles (title, description) VALUES (%s, %s) RETURNING id",
+                (title, description),
+            )
+            return cur.fetchone()["id"]
+ 
+    def get(self, role_id):
+        with self.db.cursor() as cur:
+            cur.execute("SELECT * FROM roles WHERE id = %s", (role_id,))
+            return cur.fetchone()
+ 
+    def get_all(self):
+        with self.db.cursor() as cur:
+            cur.execute("SELECT * FROM roles")
+            return cur.fetchall()
+ 
+    def update(self, role_id, **fields):
+        if not fields:
+            return False
+        set_clause = ", ".join(f"{k} = %s" for k in fields)
+        values = list(fields.values()) + [role_id]
+        with self.db.cursor() as cur:
+            cur.execute(f"UPDATE roles SET {set_clause} WHERE id = %s", values)
+            return cur.rowcount > 0
+ 
+    def delete(self, role_id):
+        with self.db.cursor() as cur:
+            cur.execute("DELETE FROM roles WHERE id = %s", (role_id,))
+            return cur.rowcount > 0
+ 
+ 
+# ---------------------------------------------------------------------------
+# users
+# ---------------------------------------------------------------------------
+ 
+class UserCRUD:
+    def __init__(self, db: Database):
+        self.db = db
+ 
+    def create(self, last_name, first_name, email, password, date_birth=None,
+               phone_number=None, role=None):
+        with self.db.cursor() as cur:
+            cur.execute(
+                """INSERT INTO users
+                   (last_name, first_name, date_birth, phone_number, email, password, role)
+                   VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id""",
+                (last_name, first_name, date_birth, phone_number, email, password, role),
+            )
+            return cur.fetchone()["id"]
+ 
+    def get(self, user_id):
+        with self.db.cursor() as cur:
+            cur.execute("SELECT * FROM users WHERE id = %s", (user_id,))
+            return cur.fetchone()
+ 
+    def get_by_email(self, email):
+        with self.db.cursor() as cur:
+            cur.execute("SELECT * FROM users WHERE email = %s", (email,))
+            return cur.fetchone()
+ 
+    def get_all(self):
+        with self.db.cursor() as cur:
+            cur.execute("SELECT * FROM users")
+            return cur.fetchall()
+ 
+    def update(self, user_id, **fields):
+        if not fields:
+            return False
+        set_clause = ", ".join(f"{k} = %s" for k in fields)
+        values = list(fields.values()) + [user_id]
+        with self.db.cursor() as cur:
+            cur.execute(f"UPDATE users SET {set_clause} WHERE id = %s", values)
+            return cur.rowcount > 0
+ 
+    def delete(self, user_id):
+        with self.db.cursor() as cur:
+            cur.execute("DELETE FROM users WHERE id = %s", (user_id,))
+            return cur.rowcount > 0
+ 
+ 
+# ---------------------------------------------------------------------------
+# vendors
+# ---------------------------------------------------------------------------
+ 
+class VendorCRUD:
+    def __init__(self, db: Database):
+        self.db = db
+ 
+    def create(self, name, phone_number=None, email=None, address=None,
+               city=None, state=None, zip_code=None):
+        with self.db.cursor() as cur:
+            cur.execute(
+                """INSERT INTO vendors
+                   (name, phone_number, email, address, city, state, zip_code)
+                   VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id""",
+                (name, phone_number, email, address, city, state, zip_code),
+            )
+            return cur.fetchone()["id"]
+ 
+    def get(self, vendor_id):
+        with self.db.cursor() as cur:
+            cur.execute("SELECT * FROM vendors WHERE id = %s", (vendor_id,))
+            return cur.fetchone()
+ 
+    def get_all(self):
+        with self.db.cursor() as cur:
+            cur.execute("SELECT * FROM vendors")
+            return cur.fetchall()
+ 
+    def update(self, vendor_id, **fields):
+        if not fields:
+            return False
+        set_clause = ", ".join(f"{k} = %s" for k in fields)
+        values = list(fields.values()) + [vendor_id]
+        with self.db.cursor() as cur:
+            cur.execute(f"UPDATE vendors SET {set_clause} WHERE id = %s", values)
+            return cur.rowcount > 0
+ 
+    def delete(self, vendor_id):
+        with self.db.cursor() as cur:
+            cur.execute("DELETE FROM vendors WHERE id = %s", (vendor_id,))
+            return cur.rowcount > 0
+ 
+ 
+# ---------------------------------------------------------------------------
+# menus
+# ---------------------------------------------------------------------------
+ 
+class MenuCRUD:
+    def __init__(self, db: Database):
+        self.db = db
+ 
+    def create(self, vendor_id, item_name, item_price, item_description=None):
+        with self.db.cursor() as cur:
+            cur.execute(
+                """INSERT INTO menus (vendor_id, item_name, item_description, item_price)
+                   VALUES (%s, %s, %s, %s) RETURNING id""",
+                (vendor_id, item_name, item_description, item_price),
+            )
+            return cur.fetchone()["id"]
+ 
+    def get(self, menu_id):
+        with self.db.cursor() as cur:
+            cur.execute("SELECT * FROM menus WHERE id = %s", (menu_id,))
+            return cur.fetchone()
+ 
+    def get_by_vendor(self, vendor_id):
+        with self.db.cursor() as cur:
+            cur.execute("SELECT * FROM menus WHERE vendor_id = %s", (vendor_id,))
+            return cur.fetchall()
+ 
+    def get_all(self):
+        with self.db.cursor() as cur:
+            cur.execute("SELECT * FROM menus")
+            return cur.fetchall()
+ 
+    def update(self, menu_id, **fields):
+        if not fields:
+            return False
+        set_clause = ", ".join(f"{k} = %s" for k in fields)
+        values = list(fields.values()) + [menu_id]
+        with self.db.cursor() as cur:
+            cur.execute(f"UPDATE menus SET {set_clause} WHERE id = %s", values)
+            return cur.rowcount > 0
+ 
+    def delete(self, menu_id):
+        with self.db.cursor() as cur:
+            cur.execute("DELETE FROM menus WHERE id = %s", (menu_id,))
+            return cur.rowcount > 0
+ 
+ 
+# ---------------------------------------------------------------------------
+# orders
+# ---------------------------------------------------------------------------
+ 
+class OrdersCRUD:
+    def __init__(self, db: Database):
+        self.db = db
+ 
+    def create(self, user_id, vendor_id, status, total_price, discount=0.0,
+               date_time=None):
+        date_time = date_time or datetime.now()
+        with self.db.cursor() as cur:
+            cur.execute(
+                """INSERT INTO orders
+                   (user_id, vendor_id, date_time, status, discount, total_price)
+                   VALUES (%s, %s, %s, %s, %s, %s) RETURNING id""",
+                (user_id, vendor_id, date_time, status, discount, total_price),
+            )
+            return cur.fetchone()["id"]
+ 
+    def get(self, order_id):
+        with self.db.cursor() as cur:
+            cur.execute("SELECT * FROM orders WHERE id = %s", (order_id,))
+            return cur.fetchone()
+ 
+    def get_by_user(self, user_id):
+        with self.db.cursor() as cur:
+            cur.execute("SELECT * FROM orders WHERE user_id = %s", (user_id,))
+            return cur.fetchall()
+ 
+    def get_with_vendor_name(self, order_id):
+        """Example join, mirrors the get_order_details pattern from before."""
+        with self.db.cursor() as cur:
+            cur.execute(
+                """SELECT o.*, v.name AS vendor_name
+                   FROM orders o
+                   JOIN vendors v ON o.vendor_id = v.id
+                   WHERE o.id = %s""",
+                (order_id,),
+            )
+            return cur.fetchone()
+ 
+    def get_all(self):
+        with self.db.cursor() as cur:
+            cur.execute("SELECT * FROM orders")
+            return cur.fetchall()
+ 
+    def update(self, order_id, **fields):
+        if not fields:
+            return False
+        set_clause = ", ".join(f"{k} = %s" for k in fields)
+        values = list(fields.values()) + [order_id]
+        with self.db.cursor() as cur:
+            cur.execute(f"UPDATE orders SET {set_clause} WHERE id = %s", values)
+            return cur.rowcount > 0
+ 
+    def cancel(self, order_id):
+        """Soft delete: only cancels an order that is still pending."""
+        with self.db.cursor() as cur:
+            cur.execute(
+                "UPDATE orders SET status = 'Cancelled' WHERE id = %s AND status = 'Pending'",
+                (order_id,),
+            )
+            return cur.rowcount > 0
+ 
+    def delete(self, order_id):
+        """Hard delete, use with caution given order_items reference orders.id."""
+        with self.db.cursor() as cur:
+            cur.execute("DELETE FROM orders WHERE id = %s", (order_id,))
+            return cur.rowcount > 0
+ 
+ 
+# ---------------------------------------------------------------------------
+# order_items
+# ---------------------------------------------------------------------------
+ 
+class OrderItemsCRUD:
+    def __init__(self, db: Database):
+        self.db = db
+ 
+    def create(self, order_id, menu_item_id, quantity, item_price_at_order):
+        item_total_price = round(quantity * float(item_price_at_order), 2)
+        with self.db.cursor() as cur:
+            cur.execute(
+                """INSERT INTO order_items
+                   (order_id, menu_item_id, quantity, item_price_at_order, item_total_price)
+                   VALUES (%s, %s, %s, %s, %s) RETURNING id""",
+                (order_id, menu_item_id, quantity, item_price_at_order, item_total_price),
+            )
+            return cur.fetchone()["id"]
+ 
+    def get(self, order_item_id):
+        with self.db.cursor() as cur:
+            cur.execute("SELECT * FROM order_items WHERE id = %s", (order_item_id,))
+            return cur.fetchone()
+ 
+    def get_by_order(self, order_id):
+        with self.db.cursor() as cur:
+            cur.execute("SELECT * FROM order_items WHERE order_id = %s", (order_id,))
+            return cur.fetchall()
+ 
+    def get_all(self):
+        with self.db.cursor() as cur:
+            cur.execute("SELECT * FROM order_items")
+            return cur.fetchall()
+ 
+    def update(self, order_item_id, **fields):
+        if not fields:
+            return False
+        set_clause = ", ".join(f"{k} = %s" for k in fields)
+        values = list(fields.values()) + [order_item_id]
+        with self.db.cursor() as cur:
+            cur.execute(f"UPDATE order_items SET {set_clause} WHERE id = %s", values)
+            return cur.rowcount > 0
+ 
+    def delete(self, order_item_id):
+        with self.db.cursor() as cur:
+            cur.execute("DELETE FROM order_items WHERE id = %s", (order_item_id,))
+            return cur.rowcount > 0
+ 
+ 
+# ---------------------------------------------------------------------------
+# Demo
+# ---------------------------------------------------------------------------
+ 
 if __name__ == "__main__":
-    crud = CampusFoodLinkCRUD()
+    postgresql://neondb_owner:Mallen271704%21%21@ep-divine-darkness-atiewbbt-pooler.c-9.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+    db = Database(
+        host="ep-divine-darkness-atiewbbt.c-9.us-east-1.aws.neon.tech",
+        dbname="neondb",
+        user="campus_app_user",
+        password="wacK-whAr-RuSM-JoL1!",
+    )
+ 
+    roles = RoleCRUD(db)
+    users = UserCRUD(db)
+    vendors = VendorCRUD(db)
+    menus = MenuCRUD(db)
+    orders = OrdersCRUD(db)
+    order_items = OrderItemsCRUD(db)
+ 
+    # Read examples against the existing seed data
+    print("All roles:", roles.get_all())
+    print("Vendor 1 menu:", menus.get_by_vendor(1))
+    print("User 3's orders:", orders.get_by_user(3))
+    print("Order 1 with vendor name:", orders.get_with_vendor_name(1))
+ 
+    # Update example
+    orders.update(11, status="Delivered")
+    print("Order 11 after update:", orders.get(11))
+ 
+    db.close()
+ 
 
-    print("CampusFoodLink CRUD Plan - Ready to use!")
-    # Example:
-    # user_id = crud.create_user(1, "Smith", "Anna", "2002-05-15", "5551234567", "anna@example.com", "pass123")
-    # print("Created user ID:", user_id)
 
-    crud.close()
+
+
