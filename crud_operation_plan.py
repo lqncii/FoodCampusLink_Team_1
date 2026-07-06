@@ -151,13 +151,13 @@ class UserCRUD:
         self.db = db
  
     def create(self, last_name, first_name, email, password, date_birth=None,
-               phone_number=None, role=None, balance=None):
+               phone_number=None, role=None, balance=0):
         with self.db.cursor() as cur:
             cur.execute(
                 """INSERT INTO users
                    (last_name, first_name, date_birth, phone_number, email, password, role)
                    VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id""",
-                (last_name, first_name, date_birth, phone_number, email, password, role),
+                (last_name, first_name, date_birth, phone_number, email, password, role, balance),
             )
             return cur.fetchone()["id"]
  
