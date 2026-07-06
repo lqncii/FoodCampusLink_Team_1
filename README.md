@@ -27,6 +27,7 @@ A Capstone project where students were proposed an issue for students experienci
  - Meal Plan Balance Display
  - Order Creation
  - Order Status
+
 **Optional**
  - Push-style notifications
  - Dietary Filters
