@@ -21,13 +21,13 @@ A Capstone project where students were proposed an issue for students experienci
 |MS Word + Obsidian|Documentation for project (.docx & .md)|
 
 ## Features
-- Required
+**Required**
  - User Login
  - Vendor Menus
  - Meal Plan Balance Display
  - Order Creation
  - Order Status
-- Optional
+**Optional**
  - Push-style notifications
  - Dietary Filters
  - Data Visualizations
