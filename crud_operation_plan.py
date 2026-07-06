@@ -29,6 +29,7 @@ class Database:
             raise
         finally:
             cur.close()
+         
  #I am not even sure if i need to have this in here because i already created the tables but god forbid something gets deleted tbh 
     def create_tables(self):
         """Idempotent: only creates tables if they don't already exist."""
@@ -49,7 +50,8 @@ class Database:
                     phone_number TEXT,
                     email TEXT UNIQUE NOT NULL,
                     password TEXT NOT NULL,
-                    role INTEGER REFERENCES roles(id)
+                    role INTEGER REFERENCES roles(id),
+                    balance DECIMAL DEFAULT 0
                 )
             """)
             cur.execute("""
@@ -70,7 +72,7 @@ class Database:
                     vendor_id INTEGER NOT NULL REFERENCES vendors(id),
                     item_name TEXT NOT NULL,
                     item_description TEXT,
-                    item_price NUMERIC(10, 2) NOT NULL
+                    item_price DECIMAL NOT NULL
                 )
             """)
             cur.execute("""
@@ -80,8 +82,8 @@ class Database:
                     vendor_id INTEGER NOT NULL REFERENCES vendors(id),
                     date_time TIMESTAMP NOT NULL,
                     status TEXT NOT NULL,
-                    discount NUMERIC(5, 2) DEFAULT 0,
-                    total_price NUMERIC(10, 2) NOT NULL
+                    discount DECIMAL DEFAULT 0,
+                    total_price DECIMAL NOT NULL
                 )
             """)
             cur.execute("""
@@ -90,8 +92,8 @@ class Database:
                     order_id INTEGER NOT NULL REFERENCES orders(id),
                     menu_item_id INTEGER NOT NULL REFERENCES menus(id),
                     quantity INTEGER NOT NULL,
-                    item_price_at_order NUMERIC(10, 2) NOT NULL,
-                    item_total_price NUMERIC(10, 2) NOT NULL
+                    item_price_at_order DECIMAL NOT NULL,
+                    item_total_price DECIMAL NOT NULL
                 )
             """)
  
@@ -149,7 +151,7 @@ class UserCRUD:
         self.db = db
  
     def create(self, last_name, first_name, email, password, date_birth=None,
-               phone_number=None, role=None):
+               phone_number=None, role=None, balance=None):
         with self.db.cursor() as cur:
             cur.execute(
                 """INSERT INTO users
@@ -402,4 +404,3 @@ class OrderItemsCRUD:
 #-------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------
-db.close()
