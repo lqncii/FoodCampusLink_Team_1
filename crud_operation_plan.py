@@ -363,7 +363,7 @@ class OrderItemsCRUD:
         self.db = db
  
     def create(self, order_id, menu_item_id, quantity, item_price_at_order):
-        item_total_price = round(quantity * float(item_price_at_order), 2)
+        total_price = quantity * Decimal(str(item_price))
         with self.db.cursor() as cur:
             cur.execute(
                 """INSERT INTO order_items
