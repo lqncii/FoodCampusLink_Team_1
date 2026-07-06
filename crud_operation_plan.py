@@ -72,7 +72,7 @@ class Database:
                     vendor_id INTEGER NOT NULL REFERENCES vendors(id),
                     item_name TEXT NOT NULL,
                     item_description TEXT,
-                    item_price DECIMAL NOT NULL
+                    item_price NUMERIC(10,2) NOT NULL
                 )
             """)
             cur.execute("""
@@ -82,8 +82,8 @@ class Database:
                     vendor_id INTEGER NOT NULL REFERENCES vendors(id),
                     date_time TIMESTAMP NOT NULL,
                     status TEXT NOT NULL,
-                    discount DECIMAL DEFAULT 0,
-                    total_price DECIMAL NOT NULL
+                    discount NUMERIC(10,2) DEFAULT 0,
+                    total_price NUMERIC(10,2) NOT NULL
                 )
             """)
             cur.execute("""
@@ -92,8 +92,8 @@ class Database:
                     order_id INTEGER NOT NULL REFERENCES orders(id),
                     menu_item_id INTEGER NOT NULL REFERENCES menus(id),
                     quantity INTEGER NOT NULL,
-                    item_price_at_order DECIMAL NOT NULL,
-                    item_total_price DECIMAL NOT NULL
+                    item_price NUMERIC(10,2) NOT NULL,
+                    item_total_price NUMERIC(10,2) NOT NULL
                 )
             """)
  
