@@ -37,8 +37,8 @@ A Capstone project where students were proposed an issue for students experienci
 ## Database Schema
 |Table Name|Column Names|
 |---|---|
-|menus|id **(PK)**, vendor_id(FK), item_name, item_description, item_price|
-|orderItems|id **(PK)**, order_id(FK), menu_item_id **(FK)**, quantity, item_price **(FK)**, price_total **(Calculated Field)**|
+|menus|id **(PK)**, vendor_id **(FK)**, item_name, item_description, item_price|
+|orderItems|id **(PK)**, order_id **(FK)**, menu_item_id **(FK)**, quantity, item_price **(FK)**, price_total **(Calculated Field)**|
 |orders|id **(PK)**, user_id **(FK)**, vendor_id **(FK)**, date_time, status, discount, total_price|
 |roles|id **(PK)**, title, description|
 |users|id **(PK)**, last_name, first_name, date_birth, phone_number, email, password **(SHA256 encrypted)**, role_id **(FK)**, balance|
