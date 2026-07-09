@@ -13,7 +13,7 @@ A Capstone project where students were proposed an issue for students experienci
 ## Tech Stack
 | Tool | Purpose |
 |---|---|
-|Webserver hosted by Purdue|Front-end / Back-end|
+|Github Pages|Front-end / Back-end|
 |PostgreSQL (Neon)|Cloud DBMS Solution|
 |pgAdmin4|DBMS Administration|
 |MS Visio|Diagram Design|
