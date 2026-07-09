@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendor Dashboard - CampusFoodLink</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-background">
+
+    <!-- Fixed Header / Navigation Bar -->
+    <header class="app-header fixed-top">
+        <div class="menu-icon">☰</div>
+        <h2 class="header-title">Vendor Dashboard</h2>
+        <div class="notification-icon">🔔</div>
+    </header>
+
+    <!-- Main Dashboard Content Area -->
+    <main class="dashboard-content">
+        
+        <!-- Header greeting and view button (Specific to Vendor View) -->
+        <section class="greeting-card primary-bg vendor-header-info">
+            <h2>Hi, Vendor User!</h2>
+            <button class="cta-button primary-btn full-width view-menu-btn">VIEW MENU</button>
+        </section>
+
+        <!-- Today's Orders Section -->
+        <h3 style="margin: 20px 0 15px;">Today's Orders</h3>
+        <div class="order-item">
+            <div class="order-details">
+                <div>#A12345</div>
+                <span>12:25 PM</span>
+            </div>
+            <div class="order-status">Preparing</div>
+        </div>
+
+        <div class="order-item">
+            <div class="order-details">
+                <div>#A12346</div>
+                <span>12:40 PM</span>
+            </div>
+            <div class="order-status">Pending</div>
+        </div>
+
+        <div class="order-item">
+            <div class="order-details">
+                <div>#A12347</div>
+                <span>12:50 PM</span>
+            </div>
+            <div class="order-status">Pending</div>
+        </div >
+
+
+        <!-- Quick Actions Grid -->
+        <h3 style="margin: 20px 0 15px;">Quick Actions</h3>
+        <div class="quick-actions-grid">
+            <div class="action-card vendor-action">
+                <span class="icon-placeholder">🍽️</span> 
+                <h3 style="margin: 0;">Orders</h3>
+            </div>
+
+            <div class="action-card vendor-action">
+                <span class="icon-placeholder">📜</span> 
+                <h3 style="margin: 0;">Menu</h3>
+            </div>
+
+            <div class="action-card vendor-action">
+                <span class="icon-placeholder">🕒</span> 
+                <h3 style="margin: 0;">Hours</h3>
+            </div >
+
+            <div class="action-card vendor-action">
+                <span class="icon-placeholder">📊</span> 
+                <h3 style="margin: 0;">Reports</h3>
+            </div>
+        </div >
+
+
+    </main>
+
+
+    <!-- Fixed Bottom Menu (Mobile Navigation) -->
+    <nav class="bottom-menu fixed-bottom">
+        <a href="#" class="menu-item active">Home</a>
+        <a href="#" class="menu-item">Orders</a>
+        <a href="#" class="menu-item">Menu</a>
+        <a href="#" class="menu-item">More</a>
+    </nav>
+
+</body>
+</html>

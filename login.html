@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log In - CampusFoodLink</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="login-background">
+
+    <!-- Splash Screen Content -->
+    <div class="splash-container">
+        <!-- Logo and Branding Area (reused for visual continuity) -->
+        <div class="logo-area">
+            <img src="logo.png" alt="Campus Foodlink Logo" class="logo-image"> 
+            <h1 class="app-title">CAMPUS FOODLINK</h1>
+            <p class="tagline">Good food. Less wait.</p>
+        </div>
+
+        <!-- Role Selection Content Area -->
+        <div class="user-selection-container login-form-container">
+             <!-- Back button now links back to the splash screen -->
+            <a href="index.html" class="back-link-style">&lt; Back</a> 
+            
+            <!-- ROLE CARDS CONTAINER -->
+            <div class="role-card student-role">
+                <img src="student.png" alt="Student icon" class="icon-image">
+                <h3 style="margin: 0;">STUDENT</h3>
+                <a href="sdash.html" class="select-link">Select</a>
+            </div>
+
+            <div class="role-card vendor-role">
+                <img src="vendor.png" alt="Vendor icon" class="icon-image"> 
+                <h3 style="margin: 0;">VENDOR</h3>
+                <a href="vdash.html" class="select-link">Select</a>
+            </div>
+
+            <div class="role-card admin-role">
+                <img src="admin.png" alt="Admin icon" class="icon-image"> 
+                <h3 style="margin: 0;">ADMIN</h3>
+                <!-- Admin login remains on the role selection page -->
+                <a href="#" class="select-link">Select</a>
+            </div>
+
+             <p class="simulation-note">Demo / Simulated Access Only. No real payments or FERPA data stored.</p>
+        </div>
+    </div >
+
+</body>
+</html>
