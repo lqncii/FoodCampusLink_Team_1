@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - CampusFoodLink</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-background">
+
+    <!-- Fixed Header / Navigation Bar -->
+    <header class="app-header fixed-top">
+        <div class="menu-icon">☰</div>
+        <h2 class="header-title">Dashboard</h2>
+        <div class="notification-icon">🔔</div>
+    </header>
+
+    <!-- Main Dashboard Content Area -->
+    <main class="dashboard-content">
+        
+        <!-- Greeting & Balance Card (The top visible card) -->
+        <section class="balance-card primary-bg">
+            <p class="greeting-text">Hi, Alex!</p>
+            <h2 class="balance-amount">$125.50</h2>
+            <p class="subtitle">Meal Plan Balance</p>
+        </section>
+
+        <!-- Quick Actions Grid -->
+        <div class="quick-actions-grid">
+            <div class="action-card student-action">
+                <span class="icon-placeholder">📚</span> 
+                <h3 style="margin: 0;">Browse Vendors</h3>
+            </div>
+
+            <div class="action-card student-action">
+                <span class="icon-placeholder">🛒</span> 
+                <h3 style="margin: 0;">My Orders</h3>
+            </div>
+
+            <div class="action-card student-action">
+                <span class="icon-placeholder">💳</span> 
+                <h3 style="margin: 0;">Meal Plan</h3>
+            </div>
+
+             <div class="action-card student-action">
+                <span class="icon-placeholder">📜</span> 
+                <h3 style="margin: 0;">History</h3>
+            </div >
+        </div>
+
+    </main>
+
+
+    <!-- Fixed Bottom Menu (Mobile Navigation) -->
+    <nav class="bottom-menu fixed-bottom">
+        <a href="#" class="menu-item active">Home</a>
+        <a href="#" class="menu-item">Orders</a>
+        <a href="#" class="menu-item">Wallet</a>
+        <a href="#" class="menu-item">Profile</a>
+    </nav>
+
+</body>
+</html>
