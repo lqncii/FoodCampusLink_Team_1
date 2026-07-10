@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard • Campus FoodLink</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+
+        <!-- Header -->
+        <div class="header">
+            <button class="back-btn" style="font-size: 24px;">☰</button>
+            <span style="flex: 1; text-align: center;">Dashboard</span>
+            <button class="back-btn" style="font-size: 24px;">🛎️</button>
+        </div>
+
+        <div class="p-6">
+
+            <!-- Greeting & Balance -->
+            <div class="dashboard-card">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div>
+                        <p style="font-size: 22px; font-weight: 600;">Hi, Alex!</p>
+                        <p style="color: #a1a1aa; margin-top: 4px;">Meal Plan Balance</p>
+                        <p style="font-size: 32px; font-weight: 700; color: #ef233c; margin-top: 8px;">$125.50</p>
+                    </div>
+                    <div style="font-size: 48px; color: #ef233c;">💰</div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <p style="margin-bottom: 16px; font-weight: 600;">Quick Actions</p>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                
+                <!-- Browse Vendors -->
+                <div class="quick-action" onclick="window.location.href='browse-vendors.html'">
+                    <div style="font-size: 32px; margin-bottom: 8px;">🏪</div>
+                    <p style="font-weight: 600;">Browse<br>Vendors</p>
+                </div>
+
+                <!-- My Orders -->
+                <div class="quick-action" onclick="alert('Opening My Orders...')">
+                    <div style="font-size: 32px; margin-bottom: 8px;">🛍️</div>
+                    <p style="font-weight: 600;">My Orders</p>
+                </div>
+
+                <!-- Meal Plan -->
+                <div class="quick-action" onclick="window.location.href='meal-plan.html'">
+                    <div style="font-size: 32px; margin-bottom: 8px;">💳</div>
+                    <p style="font-weight: 600;">Meal Plan</p>
+                </div>
+
+                <!-- History -->
+                <div class="quick-action" onclick="alert('Opening History...')">
+                    <div style="font-size: 32px; margin-bottom: 8px;">🕒</div>
+                    <p style="font-weight: 600;">History</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <div style="position: fixed; bottom: 0; left: 0; right: 0; max-width: 380px; margin: 0 auto; background-color: #111113; border-top: 1px solid #27272a; display: flex; justify-content: space-around; padding: 12px 0;">
+            
+            <div class="nav-item active">
+                <div style="font-size: 24px;">🏠</div>
+                <div>Home</div>
+            </div>
+            
+            <div class="nav-item">
+                <div style="font-size: 24px;">🛍️</div>
+                <div>Orders</div>
+            </div>
+            
+            <div class="nav-item">
+                <div style="font-size: 24px;">💰</div>
+                <div>Wallet</div>
+            </div>
+            
+            <div class="nav-item">
+                <div style="font-size: 24px;">👤</div>
+                <div>Profile</div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function goToDashboard() {
+            window.location.href = "student-dashboard.html";
+        }
+    </script>
+</body>
+</html>

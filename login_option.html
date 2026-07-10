@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log In • Campus FoodLink</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+
+        <!-- Header -->
+        <div class="header">
+            <a href="welcome_page.html" class="back-btn">&larr;</a>
+            <span>Log In</span>
+        </div>
+
+        <div class="p-6 pt-8">
+            <p style="color: #a1a1aa; margin-bottom: 24px; font-size: 15px;">I am logging in as:</p>
+
+            <!-- Student -->
+            <a href="login_option_student.html?role=student" style="text-decoration: none; color: inherit;">
+                <div class="user-option">
+                    <div class="user-icon">🎓</div>
+                    <div style="flex: 1;">
+                        <strong style="font-size: 18px;">STUDENT</strong>
+                    </div>
+                    <span style="font-size: 28px; color: #52525b;">›</span>
+                </div>
+            </a>
+
+            <!-- Vendor -->
+            <a href="login_option_vendor.html?role=vendor" style="text-decoration: none; color: inherit;">
+                <div class="user-option">
+                    <div class="user-icon">🏪</div>
+                    <div style="flex: 1;">
+                        <strong style="font-size: 18px;">VENDOR</strong>
+                    </div>
+                    <span style="font-size: 28px; color: #52525b;">›</span>
+                </div>
+            </a>
+
+            <!-- Admin -->
+            <a onclick="alert('Admin login coming soon!')" style="text-decoration: none; color: inherit;">  <!--LINK TO FUTURE ADMIN PAGE: href="login_option_admin.html?role=admin"-->
+                <div class="user-option">
+                    <div class="user-icon">🛡️</div>
+                    <div style="flex: 1;">
+                        <strong style="font-size: 18px;">ADMIN</strong>
+                    </div>
+                    <span style="font-size: 28px; color: #52525b;">›</span>
+                </div>
+            </a>
+        </div>
+
+        <div style="text-align: center; font-size: 12px; color: #52525b; margin-top: 80px; padding: 0 24px;">
+            Demo / Simulated Access Only<br>
+            No real payments or FERPA data stored.
+        </div>
+    </div>
+</body>
+</html>

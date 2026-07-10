@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log In • Campus FoodLink</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+
+        <!-- Header -->
+        <div class="header">
+            <a href="login_option.html" class="back-btn">&larr;</a>
+            <span>Log In</span>
+        </div>
+
+        <div class="p-6 pt-8">
+            <h2 style="font-size: 24px; margin-bottom: 32px; text-align: center;">Welcome back</h2>
+
+            <!-- Login Form -->
+            <form onsubmit="handleLogin(event)">
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 8px; font-size: 14px; color: #d4d4d8;">Email or Username</label>
+                    <input 
+                        type="text" 
+                        placeholder="student@campus.edu" 
+                        required
+                        style="width: 100%; padding: 16px 18px; background-color: #111113; border: 1px solid #27272a; border-radius: 12px; color: white; font-size: 16px;">
+                </div>
+
+                <div style="margin-bottom: 24px;">
+                    <label style="display: block; margin-bottom: 8px; font-size: 14px; color: #d4d4d8;">Password</label>
+                    <input 
+                        type="password" 
+                        placeholder="••••••••" 
+                        required
+                        style="width: 100%; padding: 16px 18px; background-color: #111113; border: 1px solid #27272a; border-radius: 12px; color: white; font-size: 16px;">
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; font-size: 14px;">
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="checkbox" style="accent-color: #ef233c;">
+                        <span>Remember me</span>
+                    </label>
+                    <a href="#" style="color: #ef233c; text-decoration: none;">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="font-size: 18px; padding: 18px;">
+                    LOG IN
+                </button>
+            </form>
+
+            <div style="text-align: center; margin-top: 40px; font-size: 13px; color: #52525b;">
+                Demo / Simulated Access Only
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simple demo login handler
+        function handleLogin(e) {
+            e.preventDefault();
+            alert("✅ Login successful! \n\nRedirecting to Student Dashboard.");
+            window.location.href = "student-dashboard.html"; // Redirect to a dashboard page (to be created)
+        }
+    </script>
+</body>
+</html>
