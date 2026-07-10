@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Status - CampusFoodLink</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body data-page="status">
+
+  <header class="app-header">
+    <div class="header-inner">
+      <a href="orders.html" class="back-link">&lt; Back</a>
+      <h2 class="header-title">Order Status</h2>
+      <span class="header-icon"></span>
+    </div>
+  </header>
+
+  <main class="content center">
+    <div id="alert" class="alert hidden"></div>
+
+    <p class="muted" style="margin-top:0">Order <span id="orderNum"></span></p>
+
+    <div class="stepper">
+      <div class="step"><span class="dot">&#10003;</span>Pending</div>
+      <div class="step"><span class="dot">&#127859;</span>Preparing</div>
+      <div class="step"><span class="dot">&#128337;</span>Ready</div>
+      <div class="step"><span class="dot">&#128717;&#65039;</span>Complete</div>
+    </div>
+
+    <div class="card">
+      <p class="muted" style="margin:0">Estimated Ready Time</p>
+      <p class="eta" id="etaTime">--:--</p>
+    </div>
+
+    <div class="card">
+      <p class="muted" style="margin:0">&#128276; We'll notify you when your order is ready!</p>
+    </div>
+  </main>
+
+  <div class="overlay hidden" id="readyOverlay">
+    <div class="card">
+      <div class="check-circle">&#128276;</div>
+      <h2 style="margin:0 0 6px">Your order is ready!</h2>
+      <p class="muted" style="margin:0">Order <span id="readyNum"></span></p>
+      <p style="margin:6px 0 4px" id="readyVendor"></p>
+      <p class="muted">Please pick it up at the vendor counter.</p>
+      <button class="btn btn-primary" id="gotIt">GOT IT</button>
+    </div>
+  </div>
+
+  <nav class="bottom-nav" data-nav="student" data-active="Orders"></nav>
+
+  <script src="js/env.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/student.js"></script>
+</body>
+</html>

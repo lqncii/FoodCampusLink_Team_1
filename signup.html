@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up - CampusFoodLink</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body data-page="signup" class="no-nav">
+
+  <header class="app-header">
+    <div class="header-inner">
+      <a href="index.html" class="back-link">&lt; Back</a>
+      <h2 class="header-title">Student Sign Up</h2>
+      <span class="header-icon"></span>
+    </div>
+  </header>
+
+  <main class="content">
+    <div id="alert" class="alert hidden"></div>
+
+    <form id="signupForm" class="card">
+      <div class="field"><label for="firstName">First name</label><input id="firstName" required></div>
+      <div class="field"><label for="lastName">Last name</label><input id="lastName" required></div>
+      <div class="field"><label for="email">Email</label><input id="email" type="email" required autocomplete="email"></div>
+      <div class="field"><label for="password">Password</label><input id="password" type="password" required minlength="6" autocomplete="new-password"></div>
+      <div class="field"><label for="dob">Date of birth</label><input id="dob" type="date" required></div>
+      <div class="field"><label for="phone">Phone number</label><input id="phone" type="tel" required placeholder="555-123-4567"></div>
+      <button type="submit" class="btn btn-primary">CREATE ACCOUNT</button>
+    </form>
+
+    <p class="muted center">New meal plan balances start at $0. Dining Services loads funds.</p>
+    <p class="center"><a class="link" href="login.html">Already have an account? Log in</a></p>
+  </main>
+
+  <script src="js/env.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

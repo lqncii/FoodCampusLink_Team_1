@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reports - CampusFoodLink Vendor</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body data-page="vreports">
+
+  <header class="app-header">
+    <div class="header-inner">
+      <a href="vdash.html" class="back-link">&lt; Back</a>
+      <h2 class="header-title">Reports</h2>
+      <span class="header-icon"></span>
+    </div>
+  </header>
+
+  <main class="content">
+    <div id="alert" class="alert hidden"></div>
+
+    <div class="grid-2">
+      <div class="card metric" style="margin:0"><div class="num" id="mToday">0</div><div class="lbl">Orders Today</div></div>
+      <div class="card metric" style="margin:0"><div class="num" id="mTodayRev">$0.00</div><div class="lbl">Revenue Today</div></div>
+      <div class="card metric" style="margin:0"><div class="num" id="mPending">0</div><div class="lbl">Pending Now</div></div>
+      <div class="card metric" style="margin:0"><div class="num" id="mAllRev">$0.00</div><div class="lbl">All-Time Revenue</div></div>
+    </div>
+
+    <h3 class="section-title">Orders by Status</h3>
+    <div id="statusBreakdown" class="chips" style="flex-wrap:wrap"></div>
+
+    <h3 class="section-title">Top Items</h3>
+    <div class="card" id="topItems"><p class="muted">Loading...</p></div>
+  </main>
+
+  <nav class="bottom-nav" data-nav="vendor"></nav>
+
+  <script src="js/env.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/vendor.js"></script>
+</body>
+</html>

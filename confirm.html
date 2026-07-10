@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Confirmation - CampusFoodLink</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body data-page="confirm">
+
+  <header class="app-header">
+    <div class="header-inner">
+      <a href="sdash.html" class="back-link">&lt; Home</a>
+      <h2 class="header-title">Order Confirmation</h2>
+      <span class="header-icon"></span>
+    </div>
+  </header>
+
+  <main class="content center">
+    <div id="alert" class="alert hidden"></div>
+
+    <div class="check-circle">&#10003;</div>
+    <h2 style="margin:0">Order Placed!</h2>
+    <p class="muted" style="margin-top:4px">Order <span id="orderNum"></span></p>
+
+    <div class="split" style="margin-top:20px">
+      <div class="card">
+        <p class="muted" style="margin:0 0 4px">Pickup At</p>
+        <strong id="pickupAt" style="font-size:0.9rem"></strong>
+      </div>
+      <div class="card">
+        <p class="muted" style="margin:0 0 4px">Est. Ready Time</p>
+        <strong id="etaTime" style="font-size:0.9rem"></strong>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="kv"><span>Order Summary</span><span id="itemCount"></span></div>
+      <div class="kv"><span>Total</span><span id="orderTotal"></span></div>
+    </div>
+
+    <a href="#" class="btn btn-primary" id="statusLink">VIEW ORDER STATUS</a>
+  </main>
+
+  <nav class="bottom-nav" data-nav="student" data-active="Orders"></nav>
+
+  <script src="js/env.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/student.js"></script>
+</body>
+</html>
