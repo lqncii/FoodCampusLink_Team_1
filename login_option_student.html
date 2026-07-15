@@ -61,9 +61,29 @@
         // Simple demo login handler
         function handleLogin(e) {
             e.preventDefault();
-            alert("Login successful! \n\nRedirecting to Student Dashboard.");
-            window.location.href = "student-dashboard.html"; // Redirect to a dashboard page (to be created)
+            const email = document.querySelector('input[type="text"]').value;
+            const password = document.querySelector('input[type="password"]').value;
+
+            // Check if the entered credentials match any demo student
+            const student = demoStudents.find(s => s.email === email && s.password === password);
+
+            if (student) {
+                alert("Login successful! \n\nRedirecting to Student Dashboard.");
+                window.location.href = "student-dashboard.html"; // Redirect to a dashboard page (to be created)
+            } else {
+                alert("Invalid email or password. Please try again.");
+            }
         }
+
+        // Array of demo student credentials
+        const demoStudents = [
+            { email: "matthew@campus.edu", password: "#1Manager" },
+            { email: "nicholas@campus.edu", password: "#1Analyst" },
+            { email: "jesse@campus.edu", password: "#1Tester" },
+            { email: "richard@campus.edu", password: "#1Designer" }, 
+            { email: "lance@campus.edu", password: "#1Developer" }
+        ];
+        
     </script>
 </body>
 </html>
